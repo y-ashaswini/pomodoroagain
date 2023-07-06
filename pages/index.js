@@ -14,7 +14,7 @@ export default function Home() {
             {session?.user?.email}
           </span>
           <Link
-            href={`/${session?.user?.email}`}
+            href={`/user/${session?.user?.email}`}
             className="border-2 font-bold border-jet duration-200 ease-in w-fit px-2 py-1 rounded-sm hover:bg-jet hover:text-latte cursor-pointer"
           >
             ENTER

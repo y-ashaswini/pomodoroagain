@@ -59,29 +59,29 @@ export default function Home() {
 
   // Function for sorting stored (incomplete) tasks by due date
   function sortStoredDate() {
-    console.log("Earlier: ", stored_data);
-    const f = stored_data.sort(compare_due_date);
-    console.log("Now: ", f);
+    // console.log("Earlier: ", stored_data);
+    const f = stored_data?.sort(compare_due_date);
+    // console.log("Now: ", f);
     setStored_data(f);
   }
 
   // Function for sorting stored (incomplete) tasks by priority
   function sortStoredPriority() {
-    console.log("Earlier: ", stored_data);
-    const f = stored_data.sort(compare_priority);
-    console.log("Now: ", f);
+    // console.log("Earlier: ", stored_data);
+    const f = stored_data?.sort(compare_priority);
+    // console.log("Now: ", f);
     setStored_data(f);
   }
 
   // Function for sorting completed tasks by due date
   function sortHistoryDate() {
-    const f = stored_data.sort(compare_due_date);
+    const f = stored_data?.sort(compare_due_date);
     setStored_data(f);
   }
 
   // Function for sorting completed tasks by priority
   function sortHistoryPriority() {
-    const f = stored_data.sort(compare_priority);
+    const f = stored_data?.sort(compare_priority);
     setStored_data(f);
   }
 
@@ -279,14 +279,15 @@ export default function Home() {
   };
 
   const [fetchErr, setfetchErr] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // --------------- Defining Functions to Interact with the Data ---------------
+
   // Fetch functions (from queries imported from lib\queries.js)
 
   const fetchedUserQuery = useQuery(get_tasks_of_email, {
     variables: {
       param: decodeURIComponent(paramsemail),
-      // param: decodeURIComponent("yashaswini.shivathaya2021@vitstudent.ac.in"),
     },
   });
 
@@ -300,7 +301,10 @@ export default function Home() {
     awaitRefetchQueries: true,
   });
 
-  const [createUserFunction, _c] = useMutation(create_new_user);
+  const [createUserFunction, _c] = useMutation(create_new_user, {
+    refetchQueries: [get_tasks_of_email],
+    awaitRefetchQueries: true,
+  });
 
   const [updateUserTaskFunction, _u] = useMutation(update_task_by_user, {
     refetchQueries: [get_tasks_of_email],
@@ -308,52 +312,68 @@ export default function Home() {
   });
 
   useEffect(() => {
-    const onCompleted = (data) => {
-      // if no data returned, the user isn't stored in database
-      if (data.findUserEmail === null) {
-        try {
-          createUserFunction({
-            variables: {
-              username: s.user.name,
-              email: s.user.email,
-              password: s.user.id,
-            },
-          });
-        } catch (e) {
-          console.log("error creating new user: ", e);
-        }
+    // console.log(fetchedUserQuery);
+    const noFound = () => {
+      // console.log("running no found user: ", s);
+      const username = s.user.name.split(" ").join("_");
+      const password = s.expires;
+      const mail = s.user.email;
+      // console.log(username, password, mail);
+      try {
+        createUserFunction({
+          variables: {
+            username: username,
+            email: mail,
+            password: password,
+          },
+        });
+      } catch (e) {
+        console.log("error creating new user: ", e);
       }
+    };
 
-      setStored_data(
-        data?.findUserEmail?.tasks?.filter((e) => e.is_complete == false)
-      );
-
-      setHistory_data(
-        data?.findUserEmail?.tasks?.filter((e) => e.is_complete == true)
-      );
-
+    const foundUser = (data) => {
+      setfetchErr(false);
+      setLoading(false);
+      setStored_data(data?.tasks?.filter((e) => e.is_complete == false));
+      setHistory_data(data?.tasks?.filter((e) => e.is_complete == true));
       const f = {
-        id: parseInt(data?.findUserEmail?.id),
-        username: data?.findUserEmail?.username,
-        email: data?.findUserEmail?.email,
+        id: parseInt(data?.id),
+        username: data?.username,
+        email: data?.email,
       };
-
       setCurrUser(f);
     };
-    const onError = (error) => {
+    const gotError = (error) => {
       console.log("fetching error: ", error);
       setfetchErr(true);
+      setLoading(false);
     };
-    if (onCompleted && !fetchedUserQuery.loading && !fetchedUserQuery.error) {
-      onCompleted(fetchedUserQuery.data);
-    } else if (onError && !fetchedUserQuery.loading && fetchedUserQuery.error) {
-      onError(fetchedUserQuery.error);
+
+    if (!fetchedUserQuery.loading && !fetchedUserQuery.data.findUserEmail) {
+      // No user of this email is registered in the database
+      noFound();
+    } else if (
+      !fetchedUserQuery.loading &&
+      fetchedUserQuery.data.findUserEmail
+    ) {
+      // User is found
+      foundUser(fetchedUserQuery.data.findUserEmail);
+    } else if (fetchedUserQuery.loading) {
+      setLoading(true);
+    } else {
+      // Error condition
+      setfetchErr(true);
     }
   }, [fetchedUserQuery.loading, fetchedUserQuery.data, fetchedUserQuery.error]);
 
   return fetchErr ? (
     <div className="flex flex-col w-full h-[100vh] items-center justify-center bg-latte text-jet">
       Error fetching user's tasks
+    </div>
+  ) : loading ? (
+    <div className="flex flex-col w-full h-[100vh] items-center justify-center bg-latte text-jet">
+      Loading...
     </div>
   ) : (
     <div className="flex flex-col mx-auto  bg-latte text-jet">
@@ -435,7 +455,7 @@ export default function Home() {
                   ? "bg-coral text-zinc-900"
                   : "cursor-pointer")
               }
-              onClick={() => setTask({ ...task, priority: 3 })}
+              onClick={() => setTask({ ...task, priority: 1 })}
             >
               HIGH
             </span>
@@ -457,7 +477,7 @@ export default function Home() {
                   ? "bg-coral text-zinc-900"
                   : "cursor-pointer")
               }
-              onClick={() => setTask({ ...task, priority: 1 })}
+              onClick={() => setTask({ ...task, priority: 3 })}
             >
               LOW
             </span>
@@ -490,7 +510,7 @@ export default function Home() {
                     SORT | PRIORITY
                   </span>
                 </span>
-                {stored_data.map((storedTask, index) => (
+                {stored_data?.map((storedTask, index) => (
                   <div
                     className="bg-coral sm:text-md text-xs rounded-3xl text-jet md:p-8 p-4 flex flex-col gap-2 relative"
                     key={index}
@@ -549,7 +569,7 @@ export default function Home() {
                         PRIORITY
                       </span>
                       <span className="text-xl">
-                        {storedTask.priority === 1
+                        {storedTask.priority === 3
                           ? "LOW"
                           : storedTask.priority === 2
                           ? "MEDIUM"
@@ -582,7 +602,7 @@ export default function Home() {
                     SORT | PRIORITY
                   </span>
                 </span>
-                {history_data.map((storedTask, index) => (
+                {history_data?.map((storedTask, index) => (
                   <div
                     className="md:border-2 border-2 border-jet rounded-3xl text-jet md:p-8 p-4 flex flex-col gap-2 relative sm:text-md text-xs "
                     key={index}
@@ -629,7 +649,7 @@ export default function Home() {
                         PRIORITY
                       </span>
                       <span className="text-xl">
-                        {storedTask.priority === 1
+                        {storedTask.priority === 3
                           ? "LOW"
                           : storedTask.priority === 2
                           ? "MEDIUM"

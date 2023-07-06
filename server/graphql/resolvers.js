@@ -3,18 +3,26 @@ const prisma = new PrismaClient();
 const resolvers = {
   Query: {
     pomodorotasks: () => {
-      return prisma.pomodorotask.findMany({
-        include: {
-          by_user: true,
-        },
-      });
+      try {
+        return prisma.pomodorotask.findMany({
+          include: {
+            by_user: true,
+          },
+        });
+      } catch (e) {
+        throw new Error("Error fetching tasks: ", e);
+      }
     },
     pomodorousers: () => {
-      return prisma.pomodorouser.findMany({
-        include: {
-          tasks: true,
-        },
-      });
+      try {
+        return prisma.pomodorouser.findMany({
+          include: {
+            tasks: true,
+          },
+        });
+      } catch (e) {
+        throw new Error("Error fetching users: ", e);
+      }
     },
 
     findUserID: (_r, args, _) => {
@@ -41,26 +49,34 @@ const resolvers = {
     },
 
     findUserEmail: (_r, args, _) => {
-      return prisma.pomodorouser.findFirst({
-        where: {
-          email: args.email,
-        },
-        include: {
-          tasks: true,
-        },
-      });
+      try {
+        return prisma.pomodorouser.findFirst({
+          where: {
+            email: args.email,
+          },
+          include: {
+            tasks: true,
+          },
+        });
+      } catch (e) {
+        throw new Error("Error fetching user by email: ", e);
+      }
     },
 
     findTask: (_r, args, _) => {
       const id = +args.id;
-      return prisma.pomodorotask.findFirst({
-        where: {
-          id,
-        },
-        include: {
-          by_user: true,
-        },
-      });
+      try {
+        return prisma.pomodorotask.findFirst({
+          where: {
+            id,
+          },
+          include: {
+            by_user: true,
+          },
+        });
+      } catch (e) {
+        throw new Error("Error fetching task by id: ", e);
+      }
     },
   },
   Mutation: {

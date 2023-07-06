@@ -22,14 +22,16 @@ export default function Header() {
         )}
       </span>
       {s?.user ? (
-        <span className="flex sm:flex-row flex-col sm:justify-center justify-start sm:text-base text-xs items-center gap-2">
-          <img
-            src={s.user.picture}
-            height="40"
-            width="auto"
+        <span className="flex sm:flex-row flex-col sm:justify-center justify-start sm:text-base text-xs sm:items-center items-end gap-2">
+          <Image
+            height={40}
+            width={40}
+            src={s?.user?.image}
+            alt="profile image"
             className="rounded-full"
             onClick={() => setShow((curr) => !curr)}
           />
+
           <span
             className={
               "border-2 border-jet text-jet font-bold px-4 py-2 rounded-full" +
@@ -40,7 +42,7 @@ export default function Header() {
           </span>
           {s?.user?.email ? (
             <a
-              href={`/${s.user.email}/profile`}
+              href={`/user/${s.user.email}/profile`}
               className={
                 "bg-jet text-latte px-4 py-2 font-bold rounded-full" +
                 (show ? "" : " hidden sm:inline")
@@ -53,9 +55,13 @@ export default function Header() {
           )}
 
           <div
-            onClick={() => signOut({ redirect_uri: process.env.REDIRECT_URL })}
+            onClick={() =>
+              signOut({
+                callbackUrl: `${window.location.origin}`,
+              })
+            }
             className={
-              "bg-jet text-latte font-bold px-4 py-2 rounded-full" +
+              "bg-jet text-latte font-bold px-4 py-2 rounded-full cursor-pointer" +
               (show ? "" : " hidden sm:inline")
             }
           >

@@ -15,12 +15,7 @@ export default function App({
   return (
     <SessionProvider session={session}>
       <ApolloProvider client={client}>
-        <main
-          className={
-            nunito.className +
-            " overflow-y-scroll scrollbar-thumb-zinc-700 scrollbar-thumb-rounded-2xl scrollbar-track-latte scrollbar-thin"
-          }
-        >
+        <main className={nunito.className}>
           <Header />
           <Component {...pageProps} />
         </main>
