@@ -1,38 +1,72 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Hosted Link
+
+[Pomodoro Task App](https://pomodoroagain.vercel.app/)
+
 ## Getting Started
 
-First, run the development server:
+Clone the repository onto your local machine:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+git clone https://github.com/y-ashaswini/pomodoroagain.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Generate the Prisma Client, by navigating to the ./Server directory:
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+```bash
+cd ./Server
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+You may encounter a few issues with the environment variables from the .env file, so in addition to the global .env.local file located in the root directory, please create another .env file located in the ./Server directory and store the DATABASE_URL there (since the server directory only needs access to DATABASE_URL).
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Then, run the Prisma Generate and Prisma Migrate commands:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```bash
+npx prisma generate --schema ./prisma/migrations/schema.prisma
 
-## Learn More
+npx prisma migrate dev --schema ./prisma/migrations/schema.prisma
 
-To learn more about Next.js, take a look at the following resources:
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Navigate back to the root of the directory:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```bash
+cd ../
+```
 
-## Deploy on Vercel
+Spur up your local host:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm install
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+npm run dev
+```
+
+Change the graphql uri to [http://localhost:3000](http://localhost:3000) at /lib/apollo.js
+
+Open up [http://localhost:3000](http://localhost:3000) with your browser to see the web application!
+
+## About The Website
+
+This is a web application created for users to add, edit, update and delete timed Pomodoro-based tasks.
+
+#### Features:
+
+- Sign in through a verified Google Account.
+- If your account doesn't exists in the database, a new and empty one is automatically created for you.
+- Begin by adding tasks, setting the title, giving a short description, setting the due date and the required number of pomodoros you'd assign yourself for the task.
+- Keep adding tasks, set the timer for the task you're sitting for, and let the timer guide you through till the end!
+- Navigate to the profile page to look at your task data analysed and visualised.
+
+#### Tech Stack:
+
+- Next.js with React.js + TailwindCSS (UI Framework) + ChartJS (Data visualising) hosted through Vercel
+- GraphQL + ApolloClient with Prisma ORM, data stored in a PostgreSQL database hosted through Render
+- Google NextAuth for authorisation
+
+#### Codebase Structure:
+Earlier, I tried setting it app up using the NextJS app-directory-based file structure, but due to facing a ton of issues with authentication, I rebuilt the entire thing with the pages/ structure.
+It also contains a built-in ./Server directory with the database Queries and GraphQL, Prisma initialisation files.
+
+Hope you enjoy using the app!
