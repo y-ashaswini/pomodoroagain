@@ -451,7 +451,7 @@ export default function Home() {
             <span
               className={
                 "rounded-full px-4 py-1 border-2 border-coral " +
-                (task.priority === 3
+                (task.priority === 1
                   ? "bg-coral text-zinc-900"
                   : "cursor-pointer")
               }
@@ -473,7 +473,7 @@ export default function Home() {
             <span
               className={
                 "rounded-full px-4 py-1 border-2 border-coral " +
-                (task.priority === 1
+                (task.priority === 3
                   ? "bg-coral text-zinc-900"
                   : "cursor-pointer")
               }

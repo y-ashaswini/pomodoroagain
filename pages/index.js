@@ -1,4 +1,4 @@
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import Link from "next/link";
 
 export default function Home() {
@@ -19,12 +19,7 @@ export default function Home() {
           >
             ENTER
           </Link>
-          <button
-            onClick={() => signOut()}
-            className="border-2 font-bold border-jet duration-200 ease-in w-fit px-2 py-1 rounded-sm hover:bg-jet hover:text-latte cursor-pointer"
-          >
-            SIGN OUT
-          </button>
+          
         </>
       ) : (
         <div
