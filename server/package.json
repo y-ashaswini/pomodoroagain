@@ -1,0 +1,22 @@
+{
+  "type": "module",
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "engineStrict": false,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "prisma": "^4.16.1"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.16.1",
+    "graphql": "^16.7.1",
+    "graphql-yoga": "^4.0.2"
+  }
+}

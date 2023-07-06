@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Pomodorotask {
+  id                  Int          @id @default(autoincrement())
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  title               String
+  description         String
+  pomodoros_required  Int
+  pomodoros_completed Int
+  date_started        String
+  due_date            String
+  priority            Int
+  is_complete         Boolean
+  by_user_id          Int          @map("pomodorouser")
+  by_user             Pomodorouser @relation(fields: [by_user_id], references: [id])
+}
+
+model Pomodorouser {
+  id        Int            @id @default(autoincrement())
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  email     String         @unique
+  password  String?
+  username  String?        @unique
+  tasks     Pomodorotask[]
+}
