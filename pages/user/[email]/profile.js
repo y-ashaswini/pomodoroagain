@@ -1,6 +1,7 @@
 "use client";
 import { get_tasks_of_email } from "@/lib/queries";
 import { useQuery } from "@apollo/client";
+import { useSession } from "next-auth/react";
 
 import {
   Chart as ChartJS,
@@ -28,16 +29,18 @@ const light = "#D5D5D5";
 const medium = "#FF8360";
 const dark = "#363636";
 
-import { useRouter } from "next/router";
-
 // Function for fetching user data through params
 
-export default function fetchData({ params }) {
-  const router = useRouter();
-  const { email: parsemail } = router.query;
+const [createUserFunction, _c] = useMutation(create_new_user, {
+  refetchQueries: [get_tasks_of_email],
+  awaitRefetchQueries: true,
+});
+
+export default function fetchData() {
+  const mail = s.user.email;
   const { loading, error, data } = useQuery(get_tasks_of_email, {
     variables: {
-      param: decodeURIComponent(parsemail),
+      param: decodeURIComponent(mail),
     },
   });
 
@@ -54,6 +57,13 @@ export default function fetchData({ params }) {
     return (
       <div className="flex flex-col w-full h-[100vh] items-center justify-center bg-latte text-jet">
         Error fetching user's tasks
+      </div>
+    );
+  }
+  if (!loading && !data.findUserEmail) {
+    return (
+      <div className="flex flex-col w-full h-[100vh] items-center justify-center bg-latte text-jet">
+        User doesn't exist in database! Please go to the Home Page.
       </div>
     );
   }
