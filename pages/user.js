@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 
 import Countdown from "react-countdown";
 import { useQuery, useMutation } from "@apollo/client";
@@ -14,9 +13,8 @@ import {
 } from "@/lib/queries";
 
 export default function Home() {
-  const router = useRouter();
   const { data: s, _ } = useSession();
-  const { email: paramsemail } = router.query;
+  const mail = s?.user?.email;
 
   // Setting up a template object for initial task data => to be used for every new task that the user adds
   const initial_data = {
@@ -287,7 +285,7 @@ export default function Home() {
 
   const fetchedUserQuery = useQuery(get_tasks_of_email, {
     variables: {
-      param: decodeURIComponent(paramsemail),
+      param: decodeURIComponent(mail),
     },
   });
 

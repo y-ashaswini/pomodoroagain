@@ -12,7 +12,7 @@ export default function Header() {
         <Image src="/pomodoro.svg" width={25} height={25} alt="Logo" />
 
         {s?.user?.email ? (
-          <a href={`/user/${s.user.email}`} className="sm:text-4xl text-2xl ">
+          <a href={`/user`} className="sm:text-4xl text-2xl ">
             Pomodoro
           </a>
         ) : (
@@ -42,7 +42,7 @@ export default function Header() {
           </span>
           {s?.user?.email ? (
             <a
-              href={`/user/${s.user.email}/profile`}
+              href={`/profile`}
               className={
                 "bg-jet text-latte px-4 py-2 font-bold rounded-full" +
                 (show ? "" : " hidden sm:inline")

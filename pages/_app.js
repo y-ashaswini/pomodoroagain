@@ -2,7 +2,7 @@ import { ApolloProvider } from "@apollo/client";
 import { SessionProvider } from "next-auth/react";
 import client from "@/lib/apollo";
 
-import Header from "./components/header";
+import Header from "./header";
 
 import "@/styles/globals.css";
 import { Nunito } from "next/font/google";

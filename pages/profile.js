@@ -31,13 +31,9 @@ const dark = "#363636";
 
 // Function for fetching user data through params
 
-const [createUserFunction, _c] = useMutation(create_new_user, {
-  refetchQueries: [get_tasks_of_email],
-  awaitRefetchQueries: true,
-});
-
 export default function fetchData() {
-  const mail = s.user.email;
+  const { data: s, _ } = useSession();
+  const mail = s?.user?.email;
   const { loading, error, data } = useQuery(get_tasks_of_email, {
     variables: {
       param: decodeURIComponent(mail),
